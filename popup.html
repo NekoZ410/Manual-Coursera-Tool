@@ -6,17 +6,32 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>(Extension Name)</title>
         <style>
+            /* core: global styles */
+            :root {
+                --clr-fg-white: whitesmoke;
+                --clr-fg-black: black;
+                --clr-bg-dark: rgba(25, 25, 35, 1);
+                --clr-bg-dark2: rgba(55, 55, 60, 1);
+                --btn-red: crimson;
+                --btn-red-hover: brown;
+                --btn-green: forestgreen;
+                --btn-green-hover: darkgreen;
+                --btn-blue: dodgerblue;
+                --btn-blue-hover: royalblue;
+            }
+
             /* core: body */
             body {
                 padding: 10px;
                 margin: 10px;
                 font-family: consolas;
                 text-align: center;
-                border: 1px solid whitesmoke;
-                color: whitesmoke;
-                background-color: rgba(27, 27, 35, 1);
+                border: 1px solid var(--clr-fg-white);
+                color: var(--clr-fg-white);
+                background-color: var(--clr-bg-dark);
                 width: fit-content;
                 min-width: 600px;
+                max-width: 600px;
             }
 
             /* core: info */
@@ -61,10 +76,52 @@
                 margin: 0.5em 2em;
             }
 
-            /* group: label (for each option) */
-            label {
+            .status {
+                margin: 0.5em 2em;
+                color: green;
+            }
+
+            .status-details {
+                margin: 0 2em;
+                text-align: left;
+                font-size: 12px;
+                background: var(--clr-bg-dark2);
+                padding: 10px;
+                border-radius: 5px;
+                white-space: pre-wrap;
+                color: coral;
+                display: none;
+            }
+
+            /* group: segment */
+            .group-segment-item {
+                gap: 8px;
                 font-size: 15px;
+                /* only margin when needed */
+                /* margin: 0 2em; */
+                align-items: center;
+                display: flex;
                 width: fit-content;
+            }
+
+            .group-segment-button {
+                gap: 8px;
+                font-size: 15px;
+                margin: 0 2em;
+                align-items: center;
+                justify-content: center;
+                display: flex;
+                width: calc(100% - 4em);
+            }
+
+            .group-segment-input {
+                gap: 8px;
+                font-size: 15px;
+                margin: 0 2em;
+                align-items: center;
+                justify-content: center;
+                display: flex;
+                width: calc(100% - 4em);
             }
 
             /* group: input */
@@ -81,60 +138,63 @@
                 height: 30px;
             }
 
-            h3 {
-                margin: 5px 0;
-                text-align: left;
-            }
-
-            #apiKeyInput,
-            #modelNameInput,
-            #intervalTimeInput {
-                width: 80%;
-                padding: 8px;
-                box-sizing: border-box;
-            }
-
-            #saveBtn,
-            #solveBtn {
+            .input-full {
+                border: none;
+                padding: 0 0.5em;
+                border-radius: 5px;
                 width: 100%;
-                padding: 8px;
+                height: 25px;
+            }
+
+            /* group: guide button */
+            .btn-guide {
+                border: none;
+                border-radius: 25px;
+                cursor: pointer;
+                vertical-align: middle;
+                font-size: xx-small;
+                padding: 5px;
+                color: black;
+                background-color: whitesmoke;
+                min-width: 20px;
+                min-height: 20px;
+
+                :disabled {
+                    color: black;
+                    background-color: whitesmoke;
+                }
+            }
+
+            /* group: action button */
+            .btn-action-fit {
+                padding: 10px;
+                background-color: var(--btn-green);
                 color: white;
                 border: none;
                 cursor: pointer;
-                margin-bottom: 5px;
-            }
-
-            #saveBtn {
-                background: dodgerblue;
-            }
-
-            #saveBtn:hover {
-                background: royalblue;
-            }
-
-            #solveBtn {
-                background-color: forestgreen;
-            }
-
-            #solveBtn:hover {
-                background-color: darkgreen;
-            }
-
-            #status {
-                margin: 10px 0 0 0;
-                color: green;
-            }
-
-            #modelInfoDisplay {
-                text-align: left;
-                font-size: 12px;
-                background: #222;
-                padding: 10px;
                 border-radius: 5px;
-                margin-top: 10px;
-                white-space: pre-wrap;
-                color: #cfcfcf;
-                display: none;
+                font-family: inherit;
+                font-weight: bold;
+
+                :hover {
+                    background-color: var(--btn-green-hover);
+                }
+            }
+
+            .btn-action-full {
+                padding: 10px;
+                background-color: var(--btn-blue);
+                color: white;
+                border: none;
+                cursor: pointer;
+                border-radius: 5px;
+                font-family: inherit;
+                font-weight: bold;
+                width: 100%;
+
+                :hover {
+                    background-color: var(--btn-blue-hover);
+                }
             }
         </style>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
@@ -150,31 +210,70 @@
             </div>
             <hr />
 
-            <h3>
-                Gemini API Key:
-                <button type="button" id="apiKeyInstructionsBtn"
-                    title="Click here to redirect > Click 'Create API key' > Name your key > Choose project/Create a new one > Cick 'Create key' > Click 'Copy API key'">
-                    Hover for instructions
-                </button>
-            </h3>
-            <input id="apiKeyInput" placeholder="Paste key here..." />
-            <h3>
-                Model Name:
-                <button type="button" id="modelInstructionsBtn"
-                    title="Click here to redirect > Click 'All models' to show all models > Copy your desired model name">
-                    Hover for instructions
-                </button>
-            </h3>
-            <input id="modelNameInput" placeholder="e.g., gemini-2.0-flash-lite" />
+            <div class="groups">
+                <section class="group">
+                    <h4 class="type">
+                        Gemini API Key:
+                        <button type="button" id="apiKeyInstructionsBtn" class="btn-guide"
+                            title="1. Click here to redirect&#10;2. Click 'Create API key' and name your key&#10;3. Choose/Create/Import project&#10;4. Cick 'Create key'&#10;5. Click 'Copy API key'">
+                            <i class="fa-solid fa-info"></i>
+                        </button>
+                    </h4>
+                    <div class="group-segment-input">
+                        <input id="apiKeyInput" class="input-full" placeholder="Enter your key..." />
+                    </div>
+                </section>
 
-            <h3>Request Interval (ms): </h3>
-            <input id="intervalTimeInput" type="number" placeholder="2500" value="2500" />
-            <hr />
+                <section class="group">
+                    <h4 class="type">
+                        Model name:
+                        <button type="button" id="modelInstructionsBtn" class="btn-guide"
+                            title="1. Click here to redirect&#10;2. Click 'All models' to show all models&#10;3. Copy your desired model name">
+                            <i class="fa-solid fa-info"></i>
+                        </button>
+                    </h4>
+                    <div class="group-segment-input">
+                        <input id="modelNameInput" class="input-full" placeholder="Ex: gemini-2.0-flash-lite,..." />
+                    </div>
+                </section>
 
-            <button id="saveBtn">Save configurations</button>
-            <button id="solveBtn">Solve quizzes</button>
-            <h3 id="status"></h3>
-            <div id="modelInfoDisplay"></div>
+                <section class="group">
+                    <h4 class="type">Request Interval (ms):</h4>
+                    <div class="group-segment-input">
+                        <input id="intervalTimeInput" class="input-full" placeholder="Interval between requests. Default: 2500." value="2500" />
+                    </div>
+                </section>
+
+                <section class="group">
+                    <!-- <h4 class="type"></h4> -->
+                    <div class="group-segment-button">
+                        <button id="btn-save" class="btn-action-fit">Save configurations</button>
+                        <button id="btn-solve" class="btn-action-fit"
+                            style="background-color: var(--btn-blue); :hover { background-color: var(--btn-blue-hover); }">
+                            Solve quizzes
+                        </button>
+                    </div>
+                </section>
+
+                <section class="group">
+                    <h4 id="status" class="status">
+                        <!-- data from js -->
+                    </h4>
+                    <div class="group-segment-item">
+                        <div id="modelInfoDisplay" class="status-details">
+                            <!-- data from js -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- <section class="group">
+                    <h4 class="type"></h4>
+                    <div class="group-segment-button">
+                        <input type="checkbox" id="xxx-checkbox" /> Checkbox 01
+                        <button class="btn-guide" title="Hover to see guide" disabled><i class="fa-solid fa-info"></i></button>
+                    </div>
+                </section> -->
+            </div>
         </div>
 
         <script src="popup.js"></script>

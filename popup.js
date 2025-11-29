@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const apiKeyInput = document.getElementById("apiKeyInput");
     const modelNameInput = document.getElementById("modelNameInput");
     const intervalTimeInput = document.getElementById("intervalTimeInput");
-    const saveBtn = document.getElementById("saveBtn");
-    const solveBtn = document.getElementById("solveBtn");
+    const saveBtn = document.getElementById("btn-save");
+    const solveBtn = document.getElementById("btn-solve");
     const statusDiv = document.getElementById("status");
 
     const apiKeyInstructionsBtn = document.getElementById('apiKeyInstructionsBtn');
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // save to storage
             chrome.storage.local.set({ geminiApiKey: key, geminiModel: model, requestInterval: interval }, () => {
                 statusDiv.textContent = "Saved configuration!";
-                setTimeout(() => (statusDiv.textContent = ""), 2000);
+                // setTimeout(() => (statusDiv.textContent = ""), 3000);
                 getModelInfo(key, model);
             });
         }
@@ -115,23 +115,22 @@ async function getModelInfo(apiKey, modelName) {
         const data = await response.json();
 
         if (response.ok) {
-            let infoText = `Model name: ${data.displayName || "N/A"} (${data.name || "N/A"})\n`;
-            infoText += `Version: ${data.version || "N/A"}\n`;
-            infoText += `Description: ${data.description || "No description"}\n`;
-            infoText += `Input / Output token limit: ${data.inputTokenLimit + " | " + data.outputTokenLimit || "N/A"}\n`;
-            infoText += `Methods: ${data.supportedGenerationMethods ? data.supportedGenerationMethods.join(", ") : "N/A"}\n`;
-            infoText += `Temperature: ${data.temperature || "N/A"} (Max: ${data.maxTemperature || "N/A"})\n`;
-            infoText += `Top P / Top K: ${data.topP || "N/A"} / ${data.topK || "N/A"}\n`;
-            infoText += `Thinking: ${data.thinking || "Unknown"}`;
+            let infoText = `- Model name: ${data.displayName || "N/A"} (${data.name || "N/A"})\n`;
+            infoText += `- Version: ${data.version || "N/A"}\n`;
+            infoText += `- Description: ${data.description || "No description"}\n`;
+            infoText += `- Input / Output token limit: ${data.inputTokenLimit + " | " + data.outputTokenLimit || "N/A"}\n`;
+            infoText += `- Methods: ${data.supportedGenerationMethods ? data.supportedGenerationMethods.join(", ") : "N/A"}\n`;
+            infoText += `- Temperature: ${data.temperature || "N/A"} (Max: ${data.maxTemperature || "N/A"})\n`;
+            infoText += `- Top P / Top K: ${data.topP || "N/A"} / ${data.topK || "N/A"}\n`;
+            infoText += `- Thinking: ${data.thinking || "Unknown"}`;
 
             display.textContent = infoText;
             display.style.color = "coral";
         } else {
             display.textContent = `API Error: (${response.status}): ${data.error?.message || "Unknown error"}`;
-            display.style.color = "#ff6b6b";
         }
     } catch (error) {
         display.textContent = `Error: ${error.message}`;
-        display.style.color = "#ff6b6b";
+        display.style.color = "coral";
     }
 }
